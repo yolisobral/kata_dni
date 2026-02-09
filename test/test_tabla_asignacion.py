@@ -1,5 +1,7 @@
+from src.tablaAsignacion import TablaAsignacion
 from test.dni_correctos import CASOS_TEST_CORRECTOS
 from test.dni_incorrectos import CASOS_TEST_LETRA_PROHIBIDA
+import pytest
 
 
 

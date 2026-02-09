@@ -1,99 +1,112 @@
  
-Kata sobre Programación Orientada a Objetos
-===========================================
+# Kata: Cálculo de letra de NIF con Programación Orientada a Objetos
 
-### Documentación
+## Introducción
 
-Vas a tener que tomar múltiples decisiones a la hora de construir un programa bajo el paradigma de la Programación Orientada a Objetos (POO). Este documento Working Classes te ayudará no sólo a tomar estas decisiones de manera rápida, sino también a construir una arquitectura de la aplicación que respete los principios SOLID.
-Cómo manejar los errores y la programación por contrato, en el documento Programación Defensiva.
+Este proyecto es un kata diseñado para aprender **Programación Orientada a Objetos (POO)** y principios **SOLID**, implementando un programa que calcula la letra del NIF dado un número de DNI. 
 
-### SOLID
-Aplicad los principios SOLID que ya conocéis:
- - SRP (S) o Principio de Única Responsabilidad (Single Responsibility Principle): una clase o componente sólo debe exhibir un motivo para cambiar.
- - OCP (O) o Open/Closed Principle. Las entidades de software (clases, módulos, funciones, etc.) deben estar “abiertas” a la extensión pero “cerradas” a la modificación.
- - LSP (L) o Principio de sustitución de Liskov: los objetos de un programa deberían ser reemplazables por instancias de sus tipos base sin alterar el correcto funcionamiento del programa (herencia y polimorfismo).
+Al desarrollar este programa, deberás tomar múltiples decisiones arquitectónicas basadas en los principios SOLID, utilizando la documentación sobre Programación Defensiva para el manejo de errores y programación por contrato.
 
-Todos estos principios están explicados en el libro [_Agile Principles Patterns and Practices in C, by Micah Martin, Robert C. Martin_](https://www.oreilly.com/library/view/agile-principles-patterns/0131857258/)
+## Marcos teóricos - Principios SOLID
 
-Vamos a ponerlos en práctica con el siguiente kata.
+El desarrollo debe basarse en los siguientes principios:
 
-## SOLID DNI KATA - SRP y OCP 
+- **SRP (Single Responsibility Principle)**: Cada clase o componente debe tener una única razón para cambiar.
+- **OCP (Open/Closed Principle)**: Las entidades de software (clases, módulos, funciones) deben estar "abiertas" a la extensión pero "cerradas" a la modificación.
+- **LSP (Liskov Substitution Principle)**: Los objetos de un programa deben ser reemplazables por instancias de sus tipos base sin alterar el funcionamiento correcto del programa, mediante herencia y polimorfismo.
 
-Escribe un programa que dado un número de DNI obtenga la letra del NIF. La letra correspondiente a un DNI se calcula mediante el siguiente algoritmo: 
- 1. Se obtiene el resto de dividir el número de DNI entre `23`.
- 2. El número resultante indica la posición de la letra correspondiente a ese DNI en la siguiente cadena:
+Para profundizar en estos principios, consulta [_Agile Principles Patterns and Practices in C, by Micah Martin, Robert C. Martin_](https://www.oreilly.com/library/view/agile-principles-patterns/0131857258/)
+
+## El Problema
+
+### Especificación del Algoritmo
+
+Crear un programa que, dado un número de DNI, determine la letra correspondiente del NIF mediante este proceso:
+
+1. Dividir el número de DNI entre `23` y obtener el resto.
+2. Usar ese resto como índice para buscar la letra en la tabla de asignación:
 
 ![Tabla de asignación](./doc/tabla_asignacion.png)
 
+**Restricciones de letras**: La tabla excluye las letras `I`, `Ñ`, `O`, `U` para evitar confusiones con caracteres similares (`1`, `l`, `0`).
 
-No se utilizan las letras: `I`, `Ñ`, `O`, `U`.
-La `I` y la `O` no se emplean para evitar confusiones con otros caracteres, como `1`, `l` ó `0`.
+### Diseño arquitectónico
 
-Construye el programa diseñando un **ADT** que encapsule la estructura de datos que estimes más oportuna (un vector para almacenar cada una de las letras de la tabla anterior, o un diccionario). 
-
-Divide el código en una capa de lógica y una capa de acceso a datos para que los cambios en la estructura de datos utilizada (vector, diccionario u otra estructura) no impliquen modificaciones en el código correspondiente a la lógica. Observa en la figura la arquitectura en tres capas de la aplicación:
+El programa debe implementarse en **tres capas**, tal como se muestra en el diagrama:
 
 ![Arquitectura en 3 capas](./doc/n-tier.png)
 
+Debes diseñar un **ADT (Abstract Data Type)** que encapsule la estructura de datos más apropiada: un vector para almacenar las letras de la tabla, un diccionario, u otra estructura que consideres oportuna.
 
-# Kata: Cálculo de letra de NIF (POO)
+La separación entre la **capa de lógica** y la **capa de acceso a datos** es fundamental para que los cambios en la estructura de datos utilizada (vector, diccionario u otra) no requieran modificaciones en el código de la lógica de negocio.
 
-Este repositorio contiene un kata para calcular la letra del NIF a partir del número de DNI, implementado usando principios de Programación Orientada a Objetos (POO) y respetando SOLID. El contenido está pensado para un nivel de estudio de ciclo superior.
+## Diseño de Clases Propuesto
 
-## Objetivos
+Se sugiere la siguiente arquitectura orientada a objetos:
 
-- Practicar diseño orientado a objetos: modelado de clases, responsabilidades y colaboración.
-- Aplicar principios SOLID (especialmente SRP y OCP).
-- Separar lógica de negocio y acceso a datos (ADT para la tabla de letras).
-- Escribir tests automatizados con `pytest`.
+| Clase | Propósito |
+|-------|-----------|
+| `DNI` | Objeto valor que valida y almacena el número del DNI con control de rango y formato válido |
+| `NIFCalculator` | Encapsula la lógica para calcular la letra; método público: `calculate(dni: DNI) -> str` sin estados persistentes |
+| `LetterTable` (ADT) | Abstracción de la tabla de letras que proporciona `get_letter(index)` sin exponer la estructura interna; puede ser array o diccionario |
+| `Repository` | Gestión opcional de persistencia y carga/salida de datos |
 
-## Descripción del problema
+### Responsabilidades clave:
 
-Dado un número de DNI (entero), obtener la letra correspondiente del NIF. El algoritmo es sencillo:
+- `DNI`: validación de rango válido y formato
+- `NIFCalculator`: cálculo de la letra mediante el algoritmo especificado
+- `LetterTable`: encapsulación de la colección de letras y acceso por índice
 
-1. Calcular el resto de dividir el número entre `23`.
-2. Usar ese resto como índice para seleccionar la letra en la tabla de asignación.
+## Objetivos de Aprendizaje
 
-Nota: en la tabla no se usan `I`, `Ñ`, `O`, `U` por posibles confusiones visuales.
+- Practicar diseño orientado a objetos: modelado de clases, responsabilidades y colaboración entre objetos
+- Aplicar principios SOLID, enfatizando SRP y OCP
+- Separar la lógica de negocio de la capa de acceso a datos mediante un ADT
+- Escribir y ejecutar tests automatizados con `pytest`
+- Practicar conceptos de herencia, polimorfismo y encapsulación
 
-## Diseño sugerido (OOP)
+## Estructura del Repositorio
 
-Se propone una organización en clases clara y sencilla:
+```
+.
+├── README.md                     # Este documento
+├── src/                          # Código fuente del proyecto
+│   ├── __init__.py
+│   └── tablaAsignacion.py        # Implementaciones de DNI, NIFCalculator y LetterTable
+├── test/                         # Suite de pruebas automatizadas con pytest
+│   ├── __init__.py
+│   ├── test_dni_cif.py           # Tests del cálculo de NIF
+│   ├── test_tabla_asignacion.py  # Tests de la tabla de letras
+│   ├── dni_correctos.py          # Datos de prueba: DNI válidos
+│   ├── dni_incorrectos.py        # Datos de prueba: DNI inválidos
+│   └── dni_formato_incorrecto.py # Datos de prueba: formato incorrecto
+└── doc/                          # Imágenes y diagramas
+    ├── tabla_asignacion.png
+    └── n-tier.png
+```
 
-- `DNI` : objeto valor que valida y almacena el número del DNI.
-- `NIFCalculator` : clase que contiene la lógica para calcular la letra a partir del número.
-- `LetterTable` (ADT) : abstracción para obtener la letra por índice. Implementación posible: array o diccionario. Permite cambiar la estructura sin tocar `NIFCalculator` (cumple OCP).
-- `Repository` (opcional) : si se necesitase persistencia o carga/salida de datos.
+## Instrucciones de Uso
 
-Responsabilidades clave:
+### Preparar el entorno
 
-- `DNI`: validación básica (números en rango válido, formato).
-- `NIFCalculator`: sin estados persistentes; solo método público `calculate(dni: DNI) -> str`.
-- `LetterTable`: encapsula la colección de letras y la operación `get_letter(index)`.
-
-## Estructura del repositorio
-
-- `src/` : código fuente (clases `DNI`, `NIFCalculator`, `LetterTable`).
-- `test/` : pruebas con `pytest` (ej. `test/test_dni_cif.py`).
-- `doc/` : imágenes y diagramas (tabla de asignación, arquitectura n-tier).
-- `README.md` : este archivo.
-
-## Cómo ejecutar
-
-1. Activar el entorno virtual:
+Activar el entorno virtual de Python:
 
 ```bash
 source venv/bin/activate
 ```
 
-2. Instalar dependencias (si no está hecho):
+### Instalar dependencias
+
+Instalar las herramientas necesarias:
 
 ```bash
-pip install -r requirements.txt  # si existe
+pip install -r requirements.txt
 pip install pytest
 ```
 
-3. Ejecutar los tests:
+### Ejecutar los tests
+
+Lanzar la suite de pruebas para validar la implementación:
 
 ```bash
 pytest

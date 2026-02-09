@@ -1,4 +1,7 @@
- 
+ Proyecto realizado por:
+- [Dalila Teodosio](https://github.com/DalilaManu)
+- [Yolanda Sobral](https://github.com/yolisobral)
+
 # Kata: Cálculo de letra de NIF con Programación Orientada a Objetos
 
 ## Introducción

@@ -33,5 +33,8 @@ class TablaAsignacion():
     def getLetra(self, posicion):
         return self.tabla[posicion] if posicion < len(self.tabla) else "Posicion letra fuera de rango"
     
+    def getModulo(self):
+        return len(self.tabla)
+    
     
     

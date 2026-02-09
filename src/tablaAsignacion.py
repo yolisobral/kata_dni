@@ -35,6 +35,10 @@ class TablaAsignacion():
     
     def getModulo(self):
         return len(self.tabla)
+
+    def isLetraPermitida(self, letra):
+        return letra in self.tabla
+
     
     
     
